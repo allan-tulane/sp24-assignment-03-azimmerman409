@@ -19,4 +19,4 @@ Place all written answers from `assignment-03.md` here for easier grading.
 
 
 2c. The work is O(nk), where n is the amount and k is the number of denominations.
-The span will be O(n), as we can computer each subproblem independently
+The span will be O(n), as we can compute each subproblem independently
