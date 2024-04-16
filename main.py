@@ -20,10 +20,59 @@ def MED(S, T):
 
 
 def fast_MED(S, T, MED={}):
-    # TODO -  implement top-down memoization
-    pass
+    if (S, T) in MED:
+        return MED[(S, T)]
+    if S == "":
+        return len(T)
+    elif T == "":
+        return len(S)
+    else:
+        if S[0] == T[0]:
+            result = fast_MED(S[1:], T[1:], MED)
+        else:
+            result = 1 + min(fast_MED(S, T[1:], MED), fast_MED(S[1:], T, MED), fast_MED(S[1:], T[1:], MED))
+        MED[(S, T)] = result
+        return result
+
 
 def fast_align_MED(S, T, MED={}):
-    # TODO - keep track of alignment
-    pass
+    if (S, T) in MED:
+        return MED[(S, T)]
+
+    if S == "":
+        alignment_S = "-" * len(T)
+        alignment_T = T
+        return len(T), alignment_S, alignment_T
+
+    elif T == "":
+        alignment_S = S
+        alignment_T = "-" * len(S)
+        return len(S), alignment_S, alignment_T
+
+    else:
+        if S[0] == T[0]:
+            result, alignment_S, alignment_T = fast_align_MED(S[1:], T[1:], MED)
+            alignment_S = S[0] + alignment_S
+            alignment_T = T[0] + alignment_T
+        else:
+            insert_cost, insert_alignment_S, insert_alignment_T = fast_align_MED(S, T[1:], MED)
+            delete_cost, delete_alignment_S, delete_alignment_T = fast_align_MED(S[1:], T, MED)
+            replace_cost, replace_alignment_S, replace_alignment_T = fast_align_MED(S[1:], T[1:], MED)
+
+            if insert_cost <= delete_cost and insert_cost <= replace_cost:
+                result = 1 + insert_cost
+                alignment_S = '-' + insert_alignment_S
+                alignment_T = T[0] + insert_alignment_T
+            elif delete_cost <= insert_cost and delete_cost <= replace_cost:
+                result = 1 + delete_cost
+                alignment_S = S[0] + delete_alignment_S
+                alignment_T = '-' + delete_alignment_T
+            else:
+                result = 1 + replace_cost
+                alignment_S = S[0] + replace_alignment_S
+                alignment_T = T[0] + replace_alignment_T
+
+        MED[(S, T)] = result, alignment_S, alignment_T
+        return result, alignment_S, alignment_T
+
 
